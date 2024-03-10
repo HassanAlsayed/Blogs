@@ -1,0 +1,106 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> signInManager
+@inject UserManager<IdentityUser> userManager
+@model BlogPostLikeDTO
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-6">
+            <h1 class="mb-3">@Model.Heading</h1>
+            <div class="d-flex justify-content-between mb-3">
+                <span class="text-secondary">@Model.Author</span>
+                <span class="text-secondary">@Model.PublishedDate.ToShortDateString()</span>
+            </div>
+            <div class="mb-3">
+                <a id="btnLike" style="cursor:pointer;">
+                    <i class="bi bi-hand-thumbs-up"></i>
+                </a>
+                <span id="totalLikes">@Model.TolalLikes</span> likes
+            </div>
+            <img src="@Model.FeaturedImageUrl" class="d-block img-fluid mb-3" style="width: 400px; height: 400px;" />
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Comments</h5>
+                    @if (signInManager.IsSignedIn(User))
+                    {
+                        <form method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Comment Description</label>
+                                <input type="text" class="form-control" asp-for="CommentDescription" />
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-dark">Submit</button>
+                                <input hidden asp-for="Id" />
+                                <input hidden asp-for="Heading" />
+                                <input hidden asp-for="PageTitle" />
+                                <input hidden asp-for="ShortDescription" />
+                                <input hidden asp-for="Visible" />
+                                <input hidden asp-for="Author" />
+                                <input hidden asp-for="TolalLikes" />
+                                <input hidden asp-for="Content" />
+                                <input hidden asp-for="FeaturedImageUrl" />
+                                <input hidden asp-for="Comments" />
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="card-body">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div>
+                                    @comment.Description
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span class="text-secondary">@comment.DateAdded.ToShortDateString()</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const likeBtn = document.getElementById('btnLike');
+        const totalLikes = document.getElementById('totalLikes');
+
+        function getTotalLikes() {
+            fetch(`/api/BlogPostLike/${@Model.Id}/totalLikes`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                }
+            })
+                .then(response => response.json())
+                .then(result => totalLikes.innerHTML = result);
+        }
+
+        function addLikeForBlog() {
+            fetch('/api/BlogPostLike/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': '*/*'
+                },
+                body: JSON.stringify({
+                    BlogPostId: '@Model.Id',
+                    UserId: '@userManager.GetUserId(User)'
+                })
+            })
+                .then(() => {
+                    likeBtn.innerHTML = '<i class="bi bi-hand-thumbs-up-fill"></i>';
+                    likeBtn.removeEventListener('click', addLikeForBlog);
+                    getTotalLikes();
+                });
+        }
+
+        likeBtn.addEventListener('click', addLikeForBlog);
+    </script>
+}

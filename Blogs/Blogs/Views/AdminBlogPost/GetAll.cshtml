@@ -1,0 +1,45 @@
+﻿@model IEnumerable<BlogPost>
+
+<div class="bg-secondary bg-opacity-10 py-2">
+    <div class="container text-center">
+        <h1>All Blog Post - Admin Functionality</h1>
+    </div>
+</div>
+
+<div class="container py-5">
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Heading</th>
+                <th>Author</th>
+                <th>PublishedDate</th>
+                <th>Tags</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                @foreach(var blogPost in Model)
+                {
+                <tr>
+                    <td>@blogPost.Id</td>
+                    <td>@blogPost.Heading</td>
+                    <td>@blogPost.Author</td>
+                    <td>@blogPost.PublishedDate</td>
+                    <td>
+                        <div class="d-flex">
+                            @foreach(var tag in blogPost.Tags)
+                            {
+                                <span class="bade bg-secondary me-1">@tag.Name</span>
+                            }
+                        </div>
+                    </td>
+                    <td><a asp-controller="AdminBlogPost" asp-action="Update" asp-route-BlogId="@blogPost.Id" class="btn btn-secondary">Edit</a></td>
+                    <td><a asp-controller="AdminBlogPost" asp-action="Delete" asp-route-BlogId="@blogPost.Id" class="btn btn-secondary">Delete</a></td>
+                        </tr>
+                }
+          </tbody>
+        </table>
+</div>

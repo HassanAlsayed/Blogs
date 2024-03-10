@@ -1,0 +1,33 @@
+﻿@model Tag
+
+
+<div class="bg-secondary bg-opacity-10 py-2">
+    <div class="container text-center">
+        <h1>Delete Tag - Admin Functionality</h1>
+    </div>
+</div>
+
+<div class="container py-2">
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Id</label>
+            <input type="text" class="form-control" id="Id" readonly asp-for="Id" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" asp-for="Name" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Display Name</label>
+            <input type="text" class="form-control" id="displayName" asp-for="DisplayName" readonly />
+        </div>
+
+        <div class="mb-3">
+          <div class="d-flex">
+                <button type="submit" class="btn btn-dark me-2">Delete</button>
+                <a class="border-1 btn btn-danger" asp-controller="AdminTag" asp-action="GetAll">Cancle</a>
+          </div>
+        </div>
+    </form>
+</div>
